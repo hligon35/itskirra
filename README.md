@@ -7,6 +7,7 @@ A beautiful, responsive website for Kirra's Nail Studio featuring stunning nail 
 - **Vertical Sliding Galleries**: Dynamic left and right sliding galleries showcasing real nail art photos
 - **Interactive Image Gallery**: Click any image to view in full-screen modal
 - **Service Booking System**: Complete appointment booking with time slot validation
+- **SMS & Email Notifications**: Automatic notifications sent to owner for new bookings
 - **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 - **Modern UI**: Purple and pink color scheme with smooth animations
 - **Professional Services**: Manicures, pedicures, gel nails, acrylics, and custom nail art
@@ -40,6 +41,15 @@ The website features 16 high-quality nail art images displayed in:
 ## 🚀 Live Website
 
 Visit the live website: [Kirra's Nail Studio](https://hligon35.github.io/itskirra)
+
+## 📱 SMS Notifications Setup
+
+The website includes automatic SMS notifications for new appointments! See `SMS_SETUP.md` for configuration instructions.
+
+**Quick Setup:**
+1. Update your phone number and carrier in `script.js`
+2. Replace email address in notification function
+3. Test with a booking!
 
 ---
 

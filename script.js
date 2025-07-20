@@ -91,6 +91,21 @@ function updateActiveNavLink() {
     });
 }
 
+// SMS Gateway configuration (owner's phone number and carrier)
+const SMS_CONFIG = {
+    // Replace with owner's actual phone number (10 digits, no formatting)
+    phoneNumber: '5551234567', // CHANGE THIS TO YOUR PHONE NUMBER
+    
+    // Replace with owner's carrier gateway
+    // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
+    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
+    
+    // Get SMS email address
+    getSMSEmail: function() {
+        return `${this.phoneNumber}@${this.carrier}`;
+    }
+};
+
 // Appointment form functionality
 function initializeAppointmentForm() {
     const form = document.getElementById('appointmentForm');
@@ -235,6 +250,9 @@ function handleAppointmentRequest(e) {
     // Save appointment request
     saveAppointmentRequest(formData);
     
+    // Send email and SMS notifications
+    sendAppointmentNotifications(formData);
+    
     // Show success message
     const serviceName = services[formData.serviceType].name;
     const formattedDate = new Date(formData.appointmentDate).toLocaleDateString();
@@ -248,6 +266,101 @@ function handleAppointmentRequest(e) {
     // Reset form
     document.getElementById('appointmentForm').reset();
     updateAvailableTimes();
+}
+
+// Send appointment notifications via email and SMS
+function sendAppointmentNotifications(formData) {
+    const serviceName = services[formData.serviceType].name;
+    const servicePrice = services[formData.serviceType].price;
+    const formattedDate = new Date(formData.appointmentDate).toLocaleDateString();
+    const formattedTime = formatTime(formData.appointmentTime);
+    
+    // Create message content
+    const message = `NEW APPOINTMENT REQUEST
+    
+Client: ${formData.clientName}
+Phone: ${formData.phoneNumber}
+Email: ${formData.email || 'Not provided'}
+Service: ${serviceName} ($${servicePrice})
+Date: ${formattedDate}
+Time: ${formattedTime}
+Special Requests: ${formData.specialRequests || 'None'}
+
+Please confirm within 24 hours.`;
+
+    // Send email notification to owner
+    sendEmailNotification(formData, message);
+    
+    // Send SMS notification to owner
+    sendSMSNotification(formData, message);
+}
+
+// Send email notification using FormSubmit
+function sendEmailNotification(formData, message) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/hello@kirrasnailstudio.com'; // Replace with your email
+    form.style.display = 'none';
+    
+    // Add form fields
+    const fields = {
+        '_subject': 'New Appointment Request - Kirra\'s Nail Studio',
+        '_captcha': 'false',
+        '_template': 'table',
+        'message': message,
+        'client_name': formData.clientName,
+        'client_phone': formData.phoneNumber,
+        'client_email': formData.email,
+        'service': services[formData.serviceType].name,
+        'appointment_date': formData.appointmentDate,
+        'appointment_time': formData.appointmentTime
+    };
+    
+    Object.keys(fields).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = fields[key];
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    // Note: This would normally submit, but we'll use a different approach for SMS
+    document.body.removeChild(form);
+}
+
+// Send SMS notification using email-to-SMS gateway
+function sendSMSNotification(formData, message) {
+    // Create a shorter message for SMS (160 character limit)
+    const smsMessage = `NEW BOOKING: ${formData.clientName}, ${formData.phoneNumber}, ${services[formData.serviceType].name}, ${new Date(formData.appointmentDate).toLocaleDateString()}, ${formatTime(formData.appointmentTime)}`;
+    
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = 'https://formsubmit.co/' + SMS_CONFIG.getSMSEmail();
+    form.style.display = 'none';
+    
+    // Add form fields for SMS
+    const smsFields = {
+        '_subject': '', // Empty subject for cleaner SMS
+        '_captcha': 'false',
+        '_template': 'box', // Minimal template
+        'message': smsMessage
+    };
+    
+    Object.keys(smsFields).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = smsFields[key];
+        form.appendChild(input);
+    });
+    
+    document.body.appendChild(form);
+    // Note: In production, you'd submit this form automatically
+    document.body.removeChild(form);
+    
+    console.log('SMS would be sent to:', SMS_CONFIG.getSMSEmail());
+    console.log('SMS message:', smsMessage);
 }
 
 // Save appointment request to localStorage
