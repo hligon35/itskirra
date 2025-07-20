@@ -98,8 +98,8 @@ const SMS_CONFIG = {
     
     // Replace with owner's carrier gateway
     // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
-    carrier: 'vtext.com', // CHANGE THIS TO YOUR CARRIER
-    
+    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
+
     // Get SMS email address
     getSMSEmail: function() {
         return `${this.phoneNumber}@${this.carrier}`;
