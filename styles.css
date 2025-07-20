@@ -1031,21 +1031,6 @@ span[aria-label="required"] {
     font-size: 1.5rem;
 }
 
-.hours-list {
-    margin-bottom: 30px;
-}
-
-.hours-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--light-accent);
-}
-
-.hours-item:last-child {
-    border-bottom: none;
-}
-
 .booking-notes h4 {
     color: var(--pink-primary);
     margin-bottom: 15px;
@@ -1228,6 +1213,38 @@ span[aria-label="required"] {
 }
 
 /* Responsive Design */
+
+/* Medium-small screens - Improved form responsiveness */
+@media (max-width: 600px) {
+    .booking-section {
+        padding: 50px 0;
+    }
+    
+    .booking-container {
+        gap: 25px;
+    }
+    
+    .booking-form-container {
+        padding: 20px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 11px;
+        font-size: 0.95rem;
+    }
+    
+    .form-row {
+        gap: 12px;
+    }
+    
+    .booking-notes li {
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile screens */
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
@@ -1275,8 +1292,30 @@ span[aria-label="required"] {
         gap: 30px;
     }
     
+    .booking-form-container {
+        padding: 25px;
+        border-radius: 15px;
+    }
+    
+    .appointment-form {
+        gap: 20px;
+    }
+    
     .form-row {
         grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        font-size: 1rem;
+    }
+    
+    .booking-info {
+        padding: 20px;
+        border-radius: 15px;
     }
     
     .contact-grid {
@@ -1536,6 +1575,66 @@ span[aria-label="required"] {
     
     .logo-section .tagline {
         font-size: 0.7rem;
+    }
+    
+    /* Ultra-compact booking form for very small screens */
+    .booking-section {
+        padding: 40px 0;
+    }
+    
+    .booking-form-container {
+        padding: 15px;
+        border-radius: 12px;
+    }
+    
+    .appointment-form {
+        gap: 15px;
+    }
+    
+    .form-group {
+        gap: 8px;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px;
+        font-size: 0.9rem;
+        border-radius: 8px;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .booking-info {
+        padding: 15px;
+        border-radius: 12px;
+    }
+    
+    .booking-notes h4 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+    
+    .booking-notes li {
+        font-size: 0.85rem;
+        padding: 3px 0;
+    }
+    
+    .special-services h4 {
+        font-size: 0.95rem;
+    }
+    
+    .special-services p {
+        font-size: 0.85rem;
+        line-height: 1.4;
     }
     
     .container {
