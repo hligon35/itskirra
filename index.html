@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirra's Nail Studio - Where Nails Meet Art & Music</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Vertical Sliding Galleries -->
+    <div class="vertical-slider left-slider">
+        <div class="vertical-slider-container" id="leftSliderContainer">
+            <!-- Images will be loaded here via JavaScript -->
+        </div>
+    </div>
+    
+    <div class="vertical-slider right-slider">
+        <div class="vertical-slider-container" id="rightSliderContainer">
+            <!-- Images will be loaded here via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo-section">
+                <h1><i class="fas fa-paint-brush"></i> Kirra's Nail Studio</h1>
+                <p class="tagline">Where Nails Meet Art & Music</p>
+            </div>
+            <nav class="main-nav">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#booking" class="nav-link">Book Now</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <h2>Transform Your Nails into Art</h2>
+            <p>Experience the perfect blend of artistry and relaxation in our boutique nail studio. Our skilled technicians transform your nails into wearable art while you enjoy our curated music selection.</p>
+            <div class="hero-buttons">
+                <a href="#booking" class="btn btn-primary">
+                    <i class="fas fa-calendar-alt"></i> Book Appointment
+                </a>
+                <a href="#services" class="btn btn-secondary">
+                    <i class="fas fa-list"></i> View Services
+                </a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="floating-nail-art">
+                <i class="fas fa-paint-brush"></i>
+                <i class="fas fa-palette"></i>
+                <i class="fas fa-sparkles"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card" data-service="manicure">
+                    <div class="service-icon">
+                        <i class="fas fa-hand-paper"></i>
+                    </div>
+                    <h3>Classic Manicure</h3>
+                    <p>Professional nail care with cuticle work and polish application</p>
+                    <div class="service-details">
+                        <span class="duration">30 min</span>
+                        <span class="price">$25</span>
+                    </div>
+                </div>
+
+                <div class="service-card" data-service="pedicure">
+                    <div class="service-icon">
+                        <i class="fas fa-spa"></i>
+                    </div>
+                    <h3>Pedicure</h3>
+                    <p>Relaxing foot spa treatment with nail care and polish</p>
+                    <div class="service-details">
+                        <span class="duration">45 min</span>
+                        <span class="price">$35</span>
+                    </div>
+                </div>
+
+                <div class="service-card" data-service="gel">
+                    <div class="service-icon">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h3>Gel Nails</h3>
+                    <p>Long-lasting gel polish application for durability and shine</p>
+                    <div class="service-details">
+                        <span class="duration">60 min</span>
+                        <span class="price">$45</span>
+                    </div>
+                </div>
+
+                <div class="service-card" data-service="acrylic">
+                    <div class="service-icon">
+                        <i class="fas fa-magic"></i>
+                    </div>
+                    <h3>Acrylic Set</h3>
+                    <p>Beautiful acrylic nail extensions with shape and design options</p>
+                    <div class="service-details">
+                        <span class="duration">75 min</span>
+                        <span class="price">$55</span>
+                    </div>
+                </div>
+
+                <div class="service-card" data-service="nail-art">
+                    <div class="service-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <h3>Custom Nail Art</h3>
+                    <p>Unique artistic designs tailored to your personal style</p>
+                    <div class="service-details">
+                        <span class="duration">90 min</span>
+                        <span class="price">$65</span>
+                    </div>
+                </div>
+
+                <div class="service-card" data-service="mushroom-design">
+                    <div class="service-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Mushroom Special</h3>
+                    <p>Our signature mushroom-themed nail art collection - exclusive design</p>
+                    <div class="service-details">
+                        <span class="duration">90 min</span>
+                        <span class="price">$70</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <div class="container">
+            <h2 class="section-title">My Work</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery images will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Section -->
+    <section id="booking" class="booking-section">
+        <div class="container">
+            <h2 class="section-title">Book Your Appointment</h2>
+            <div class="booking-container">
+                <div class="booking-form-container">
+                    <form id="appointmentForm" class="appointment-form">
+                        <div class="form-group">
+                            <label for="clientName">
+                                <i class="fas fa-user"></i> Full Name
+                            </label>
+                            <input type="text" id="clientName" name="clientName" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phoneNumber">
+                                <i class="fas fa-phone"></i> Phone Number
+                            </label>
+                            <input type="tel" id="phoneNumber" name="phoneNumber" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">
+                                <i class="fas fa-envelope"></i> Email (Optional)
+                            </label>
+                            <input type="email" id="email" name="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="serviceType">
+                                <i class="fas fa-list"></i> Service
+                            </label>
+                            <select id="serviceType" name="serviceType" required>
+                                <option value="">Select a service...</option>
+                                <option value="manicure">Classic Manicure - $25 (30 min)</option>
+                                <option value="pedicure">Pedicure - $35 (45 min)</option>
+                                <option value="gel">Gel Nails - $45 (60 min)</option>
+                                <option value="acrylic">Acrylic Set - $55 (75 min)</option>
+                                <option value="nail-art">Custom Nail Art - $65 (90 min)</option>
+                                <option value="mushroom-design">Mushroom Special - $70 (90 min)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="requestDate">
+                                    <i class="fas fa-calendar"></i> Preferred Date
+                                </label>
+                                <input type="date" id="requestDate" name="requestDate" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="requestTime">
+                                    <i class="fas fa-clock"></i> Preferred Time
+                                </label>
+                                <select id="requestTime" name="requestTime" required>
+                                    <option value="">Select time...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="specialRequests">
+                                <i class="fas fa-comment"></i> Special Requests
+                            </label>
+                            <textarea id="specialRequests" name="specialRequests" rows="3" placeholder="Any special requests or design ideas?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-book">
+                            <i class="fas fa-calendar-check"></i> Request Appointment
+                        </button>
+                    </form>
+                </div>
+
+                <div class="booking-info">
+                    <h3>Business Hours</h3>
+                    <div class="hours-list">
+                        <div class="hours-item">
+                            <span>Monday - Thursday</span>
+                            <span>9:00 AM - 6:00 PM</span>
+                        </div>
+                        <div class="hours-item">
+                            <span>Friday</span>
+                            <span>9:00 AM - 7:00 PM</span>
+                        </div>
+                        <div class="hours-item">
+                            <span>Saturday</span>
+                            <span>10:00 AM - 5:00 PM</span>
+                        </div>
+                        <div class="hours-item">
+                            <span>Sunday</span>
+                            <span>12:00 PM - 4:00 PM</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-notes">
+                        <h4>Please Note:</h4>
+                        <ul>
+                            <li>Appointments are confirmed within 24 hours</li>
+                            <li>48-hour cancellation policy</li>
+                            <li>Bring your own music playlist or enjoy ours!</li>
+                            <li>Group bookings available for special occasions</li>
+                            <li>All tools are sterilized between clients</li>
+                            <li>We use high-quality, professional nail products</li>
+                        </ul>
+                        
+                        <div class="special-services">
+                            <h4>💅 Specialty Services:</h4>
+                            <p><strong>Mushroom Special ($70):</strong> Our signature exclusive design featuring beautiful mushroom-themed nail art. Perfect for nature lovers and unique style enthusiasts!</p>
+                            <p><strong>Custom Nail Art ($65):</strong> Work with our artists to create completely unique designs that reflect your personality and style.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Visit Our Studio</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Location</h4>
+                            <p>123 Art Street<br>Creative District, City 12345</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>(555) 123-NAIL</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>hello@kirrasnailstudio.com</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-music"></i>
+                        <div>
+                            <h4>Vibe</h4>
+                            <p>Chill music, creative energy,<br>and artistic nail transformations</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="social-links">
+                    <h4>Follow Our Art</h4>
+                    <div class="social-icons">
+                        <a href="#" class="social-link">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="#" class="social-link">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2025 Kirra's Nail Studio - Where Nails Meet Art & Music</p>
+        </div>
+    </footer>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
