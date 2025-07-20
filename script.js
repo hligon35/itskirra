@@ -94,11 +94,11 @@ function updateActiveNavLink() {
 // SMS Gateway configuration (owner's phone number and carrier)
 const SMS_CONFIG = {
     // Replace with owner's actual phone number (10 digits, no formatting)
-    phoneNumber: '5551234567', // CHANGE THIS TO YOUR PHONE NUMBER
+    phoneNumber: '4632457230', // Kirra's actual phone number
     
     // Replace with owner's carrier gateway
     // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
-    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
+    carrier: 'vtext.com', // CHANGE THIS TO YOUR CARRIER
     
     // Get SMS email address
     getSMSEmail: function() {
@@ -307,13 +307,15 @@ function sendEmailNotification(formData, message) {
         '_subject': 'New Appointment Request - Kirra\'s Nail Studio',
         '_captcha': 'false',
         '_template': 'table',
+        '_next': window.location.href, // Redirect back to the same page
         'message': message,
         'client_name': formData.clientName,
         'client_phone': formData.phoneNumber,
         'client_email': formData.email,
         'service': services[formData.serviceType].name,
         'appointment_date': formData.appointmentDate,
-        'appointment_time': formData.appointmentTime
+        'appointment_time': formData.appointmentTime,
+        'studio_phone': '(463) 245-7230'
     };
     
     Object.keys(fields).forEach(key => {
@@ -325,7 +327,7 @@ function sendEmailNotification(formData, message) {
     });
     
     document.body.appendChild(form);
-    // Note: This would normally submit, but we'll use a different approach for SMS
+    form.submit(); // Actually submit the email form
     document.body.removeChild(form);
 }
 
@@ -338,12 +340,14 @@ function sendSMSNotification(formData, message) {
     form.method = 'POST';
     form.action = 'https://formsubmit.co/' + SMS_CONFIG.getSMSEmail();
     form.style.display = 'none';
+    form.target = '_blank'; // Open in new tab to avoid redirect
     
     // Add form fields for SMS
     const smsFields = {
-        '_subject': '', // Empty subject for cleaner SMS
+        '_subject': 'Kirra\'s Nail Studio', // Short subject for SMS
         '_captcha': 'false',
         '_template': 'box', // Minimal template
+        '_next': 'https://kirrasnailstudio.com', // Redirect URL
         'message': smsMessage
     };
     
@@ -356,10 +360,14 @@ function sendSMSNotification(formData, message) {
     });
     
     document.body.appendChild(form);
-    // Note: In production, you'd submit this form automatically
-    document.body.removeChild(form);
     
-    console.log('SMS would be sent to:', SMS_CONFIG.getSMSEmail());
+    // Submit the SMS form with a slight delay to avoid conflicts
+    setTimeout(() => {
+        form.submit();
+        document.body.removeChild(form);
+    }, 1000);
+    
+    console.log('SMS sent to:', SMS_CONFIG.getSMSEmail());
     console.log('SMS message:', smsMessage);
 }
 

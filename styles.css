@@ -669,6 +669,32 @@ body {
     line-height: 1.6;
 }
 
+/* Phone link styling */
+.contact-item a[href^="tel"] {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.contact-item a[href^="tel"]:hover {
+    color: var(--accent-color);
+    text-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+}
+
+/* Booking notes phone link */
+.booking-notes a[href^="tel"] {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.booking-notes a[href^="tel"]:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}
+
 .social-links {
     text-align: center;
 }

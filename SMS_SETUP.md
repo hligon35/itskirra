@@ -9,7 +9,7 @@ Update the SMS_CONFIG in `script.js`:
 
 ```javascript
 const SMS_CONFIG = {
-    phoneNumber: 'YOUR_10_DIGIT_PHONE_NUMBER', // e.g., '5551234567'
+    phoneNumber: '4632457230', // Kirra's phone number
     carrier: 'YOUR_CARRIER_GATEWAY', // See list below
     getSMSEmail: function() {
         return `${this.phoneNumber}@${this.carrier}`;
