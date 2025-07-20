@@ -1,5 +1,8 @@
-// Kirra's Nail Studio - Simplified Website JavaScript
-// Appointment scheduling and interactive features
+// Kirra's Nail Studio - Optimized Website JavaScript
+// Performance optimizations and mobile-first approach
+
+// Performance optimization: Use requestAnimationFrame for smooth animations
+let animationFrame;
 
 // Service data with pricing and duration (from original API)
 const services = {
@@ -25,15 +28,69 @@ const workingHours = {
 // Lunch break
 const LUNCH_BREAK = { start: '12:30', end: '13:30' };
 
-// Initialize the website
+// SMS Gateway configuration (owner's phone number and carrier)
+const SMS_CONFIG = {
+    // Replace with owner's actual phone number (10 digits, no formatting)
+    phoneNumber: '4632457230', // Kirra's actual phone number
+    
+    // Replace with owner's carrier gateway
+    // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
+    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
+
+    // Get SMS email address
+    getSMSEmail: function() {
+        return `${this.phoneNumber}@${this.carrier}`;
+    }
+};
+
+// Performance optimization: Debounce function for scroll events
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Performance optimization: Throttle function for resize events
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    }
+}
+
+// Initialize the website with performance optimizations
 document.addEventListener('DOMContentLoaded', function() {
-    initializeNavigation();
-    initializeAppointmentForm();
-    initializeGallery();
-    setMinDate();
+    // Use requestAnimationFrame for smooth initialization
+    requestAnimationFrame(() => {
+        initializeNavigation();
+        initializeAppointmentForm();
+        setMinDate();
+        
+        // Lazy load gallery and sliders to improve initial page load
+        if ('IntersectionObserver' in window) {
+            lazyLoadGallery();
+            lazyLoadVerticalSliders();
+        } else {
+            // Fallback for older browsers
+            initializeGallery();
+            initializeVerticalSliders();
+        }
+    });
 });
 
-// Navigation functionality
+// Optimized navigation functionality with passive event listeners
 function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -41,13 +98,16 @@ function initializeNavigation() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
+            // Performance: Use DocumentFragment to batch DOM updates
+            const fragment = document.createDocumentFragment();
+            
             // Remove active class from all links
             navLinks.forEach(l => l.classList.remove('active'));
             
             // Add active class to clicked link
             this.classList.add('active');
             
-            // Smooth scroll to section
+            // Smooth scroll to section with optimized scrolling
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
             
@@ -55,18 +115,48 @@ function initializeNavigation() {
                 const headerHeight = document.querySelector('.main-header').offsetHeight;
                 const targetPosition = targetSection.offsetTop - headerHeight - 20;
                 
-                window.scrollTo({
-                    top: targetPosition,
-                    behavior: 'smooth'
-                });
+                // Use smooth scrolling with requestAnimationFrame for better performance
+                smoothScrollTo(targetPosition);
             }
         });
     });
     
-    // Update active nav link on scroll
-    window.addEventListener('scroll', updateActiveNavLink);
+    // Debounced scroll event for performance
+    const debouncedScrollHandler = debounce(updateActiveNavLink, 10);
+    window.addEventListener('scroll', debouncedScrollHandler, { passive: true });
 }
 
+// Optimized smooth scrolling
+function smoothScrollTo(targetPosition) {
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    const duration = 800;
+    let start = null;
+    
+    function step(timestamp) {
+        if (!start) start = timestamp;
+        const progress = timestamp - start;
+        const percentage = Math.min(progress / duration, 1);
+        
+        // Easing function for smooth animation
+        const ease = easeInOutCubic(percentage);
+        
+        window.scrollTo(0, startPosition + distance * ease);
+        
+        if (progress < duration) {
+            requestAnimationFrame(step);
+        }
+    }
+    
+    requestAnimationFrame(step);
+}
+
+// Easing function for smooth animations
+function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+}
+
+// Optimized active nav link updating
 function updateActiveNavLink() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -83,50 +173,142 @@ function updateActiveNavLink() {
         }
     });
     
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('href') === `#${current}`) {
-            link.classList.add('active');
-        }
+    // Batch DOM updates for performance
+    requestAnimationFrame(() => {
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${current}`) {
+                link.classList.add('active');
+            }
+        });
     });
 }
 
-// SMS Gateway configuration (owner's phone number and carrier)
-const SMS_CONFIG = {
-    // Replace with owner's actual phone number (10 digits, no formatting)
-    phoneNumber: '4632457230', // Kirra's actual phone number
-    
-    // Replace with owner's carrier gateway
-    // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
-    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
-
-    // Get SMS email address
-    getSMSEmail: function() {
-        return `${this.phoneNumber}@${this.carrier}`;
-    }
-};
-
-// Appointment form functionality
+// Optimized appointment form initialization
 function initializeAppointmentForm() {
-    const form = document.getElementById('appointmentForm');
-    const dateInput = document.getElementById('requestDate');
-    const timeSelect = document.getElementById('requestTime');
-    const serviceSelect = document.getElementById('serviceType');
+    const form = document.getElementById('appointment-form') || document.getElementById('appointmentForm');
+    const dateInput = document.getElementById('date') || document.getElementById('requestDate');
+    const timeSelect = document.getElementById('time') || document.getElementById('requestTime');
+    const serviceSelect = document.getElementById('service') || document.getElementById('serviceType');
+    const serviceInfo = document.getElementById('service-info');
     
-    // Handle date change to update available times
-    dateInput.addEventListener('change', function() {
+    if (!form) return;
+    
+    // Service selection handler with debouncing
+    const debouncedServiceChange = debounce(() => {
+        if (serviceInfo) updateServiceInfo();
         updateAvailableTimes();
-    });
+    }, 300);
     
-    // Handle service selection
-    serviceSelect.addEventListener('change', function() {
-        updateAvailableTimes();
-    });
+    if (serviceSelect) serviceSelect.addEventListener('change', debouncedServiceChange);
+    if (dateInput) dateInput.addEventListener('change', updateAvailableTimes);
     
-    // Handle form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        handleAppointmentRequest(e);
+    // Form submission with SMS notification
+    form.addEventListener('submit', handleFormSubmission);
+    
+    // Initialize service info
+    if (serviceInfo) updateServiceInfo();
+}
+
+function updateServiceInfo() {
+    const serviceSelect = document.getElementById('service') || document.getElementById('serviceType');
+    const serviceInfo = document.getElementById('service-info');
+    const selectedService = services[serviceSelect.value];
+    
+    if (selectedService && serviceInfo) {
+        requestAnimationFrame(() => {
+            serviceInfo.innerHTML = `
+                <div class="service-details">
+                    <h4>${selectedService.name}</h4>
+                    <p class="service-description">${selectedService.description}</p>
+                    <div class="service-meta">
+                        <span class="duration">⏱️ ${selectedService.duration} minutes</span>
+                        <span class="price">💰 $${selectedService.price}</span>
+                    </div>
+                </div>
+            `;
+            serviceInfo.style.display = 'block';
+        });
+    } else if (serviceInfo) {
+        serviceInfo.style.display = 'none';
+    }
+}
+
+// Optimized form submission handler
+function handleFormSubmission(e) {
+    e.preventDefault();
+    
+    // Use either form ID that exists
+    const form = document.getElementById('appointment-form') || document.getElementById('appointmentForm');
+    const formData = new FormData(form);
+    
+    // Extract form data with fallback field names
+    const appointmentData = {
+        id: generateId(),
+        clientName: formData.get('name') || formData.get('clientName'),
+        phoneNumber: formData.get('phone') || formData.get('phoneNumber'),
+        email: formData.get('email'),
+        serviceType: formData.get('service') || formData.get('serviceType'),
+        appointmentDate: formData.get('date') || formData.get('requestDate'),
+        appointmentTime: formData.get('time') || formData.get('requestTime'),
+        specialRequests: formData.get('message') || formData.get('specialRequests') || '',
+        status: 'pending',
+        createdAt: new Date().toISOString()
+    };
+    
+    // Validate required fields
+    if (!appointmentData.clientName || !appointmentData.phoneNumber || !appointmentData.serviceType || 
+        !appointmentData.appointmentDate || !appointmentData.appointmentTime) {
+        showNotification('Please fill in all required fields.', 'error');
+        return;
+    }
+    
+    // Save appointment request
+    saveAppointmentRequest(appointmentData);
+    
+    // Send notifications
+    sendAppointmentNotifications(appointmentData);
+    
+    // Show success message
+    const serviceName = services[appointmentData.serviceType].name;
+    const formattedDate = new Date(appointmentData.appointmentDate).toLocaleDateString();
+    const formattedTime = formatTime(appointmentData.appointmentTime);
+    
+    showNotification(
+        `Thank you ${appointmentData.clientName}! Your appointment request for ${serviceName} on ${formattedDate} at ${formattedTime} has been submitted. We'll confirm within 24 hours!`, 
+        'success'
+    );
+    
+    // Reset form
+    form.reset();
+    updateAvailableTimes();
+}
+
+// Performance optimized notification system
+function showNotification(message, type = 'success') {
+    let notification = document.getElementById('notification');
+    
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        notification.className = 'notification';
+        document.body.appendChild(notification);
+    }
+    
+    // Use requestAnimationFrame for smooth animations
+    requestAnimationFrame(() => {
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        
+        // Show notification
+        requestAnimationFrame(() => {
+            notification.classList.add('show');
+        });
+        
+        // Hide notification after 5 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 5000);
     });
 }
 
@@ -383,9 +565,103 @@ function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// Initialize gallery with service-related content
+// Lazy loading for gallery images with Intersection Observer
+function lazyLoadGallery() {
+    const galleryImages = document.querySelectorAll('.gallery-image, .vertical-slider-image');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.dataset.src || img.src;
+                    
+                    if (img.dataset.src) {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    }
+                    
+                    img.classList.add('loaded');
+                    observer.unobserve(img);
+                }
+            });
+        }, {
+            rootMargin: '50px 0px',
+            threshold: 0.1
+        });
+
+        galleryImages.forEach(img => {
+            if (img.dataset.src) {
+                imageObserver.observe(img);
+            }
+        });
+    }
+}
+
+// Optimized image modal functionality with better performance
+function showImageModal(imageSrc, imageAlt) {
+    let modal = document.getElementById('imageModal');
+    
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'imageModal';
+        modal.className = 'image-modal';
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-labelledby', 'modalCaption');
+        modal.innerHTML = `
+            <div class="image-modal-content">
+                <button class="image-modal-close" aria-label="Close image modal">&times;</button>
+                <img class="image-modal-img" id="modalImage" alt="">
+                <div class="image-modal-caption" id="modalCaption"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // Optimized event listeners
+        const closeBtn = modal.querySelector('.image-modal-close');
+        const closeModal = () => {
+            modal.style.opacity = '0';
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 300);
+        };
+        
+        closeBtn.addEventListener('click', closeModal);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function escHandler(e) {
+            if (e.key === 'Escape' && modal.style.display === 'block') {
+                closeModal();
+                document.removeEventListener('keydown', escHandler);
+            }
+        });
+    }
+    
+    // Show the modal with smooth animation
+    const modalImg = modal.querySelector('#modalImage');
+    const modalCaption = modal.querySelector('#modalCaption');
+    
+    modalImg.src = imageSrc;
+    modalImg.alt = imageAlt;
+    modalCaption.textContent = imageAlt;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    
+    requestAnimationFrame(() => {
+        modal.style.opacity = '1';
+    });
+}
+
+// Optimized gallery initialization with real images
 function initializeGallery() {
     const galleryGrid = document.getElementById('galleryGrid');
+    if (!galleryGrid) return;
     
     // Real nail art images with service associations
     const galleryImages = [
@@ -407,15 +683,21 @@ function initializeGallery() {
         { src: 'images/IMG_9941.PNG', alt: 'Signature Style', service: 'nail-art' }
     ];
     
+    // Use DocumentFragment for better performance
+    const fragment = document.createDocumentFragment();
+    
     galleryImages.forEach((imageData, index) => {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
         
         const img = document.createElement('img');
-        img.src = imageData.src;
-        img.alt = imageData.alt;
         img.className = 'gallery-image';
+        img.setAttribute('data-src', imageData.src); // For lazy loading
+        img.alt = imageData.alt;
         img.loading = 'lazy';
+        
+        // Placeholder for lazy loading
+        img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect width="100%25" height="100%25" fill="%23f0f0f0"/%3E%3C/svg%3E';
         
         // Add error handling
         img.onerror = function() {
@@ -436,19 +718,22 @@ function initializeGallery() {
         galleryItem.appendChild(overlay);
         galleryItem.dataset.service = imageData.service;
         
-        // Add click functionality to show modal and scroll to booking
-        galleryItem.addEventListener('click', function() {
+        // Optimized event handlers
+        galleryItem.addEventListener('click', () => {
             showImageModal(imageData.src, imageData.alt);
         });
         
-        // Add double-click to go to booking
-        galleryItem.addEventListener('dblclick', function() {
-            const serviceType = this.dataset.service;
-            scrollToBooking(serviceType);
+        galleryItem.addEventListener('dblclick', () => {
+            scrollToBooking(imageData.service);
         });
         
-        galleryGrid.appendChild(galleryItem);
+        fragment.appendChild(galleryItem);
     });
+    
+    galleryGrid.appendChild(fragment);
+    
+    // Initialize lazy loading
+    lazyLoadGallery();
 }
 
 // Service card interactions
