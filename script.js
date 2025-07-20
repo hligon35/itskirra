@@ -834,7 +834,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Vertical Sliding Gallery Implementation
+// Vertical Sliding Gallery Implementation - Continuous Seamless Loop
 function initializeVerticalSliders() {
     // Real nail art images from the images folder
     const NAIL_ART_IMAGES = [
@@ -856,7 +856,7 @@ function initializeVerticalSliders() {
         'images/IMG_9941.PNG'
     ];
     
-    // Create nail art image items
+    // Create nail art image items with proper structure for seamless loop
     const createImageItem = (imagePath, index) => {
         const item = document.createElement('div');
         item.className = 'vertical-slider-item';
@@ -865,7 +865,7 @@ function initializeVerticalSliders() {
         img.className = 'vertical-slider-image';
         img.src = imagePath;
         img.alt = `Nail Art Design ${index + 1}`;
-        img.title = `Nail Art Design ${index + 1}`;
+        img.title = `Click to view ${img.alt}`;
         img.loading = 'lazy';
         
         // Add error handling for images
@@ -874,11 +874,17 @@ function initializeVerticalSliders() {
             this.style.display = 'none';
         };
         
+        // Add click handler for modal
+        img.addEventListener('click', (e) => {
+            e.preventDefault();
+            showImageModal(imagePath, img.alt);
+        });
+        
         item.appendChild(img);
         return item;
     };
     
-    // Shuffle an array
+    // Shuffle an array for variety
     const shuffleArray = (array) => {
         const newArray = [...array];
         for (let i = newArray.length - 1; i > 0; i--) {
@@ -888,70 +894,89 @@ function initializeVerticalSliders() {
         return newArray;
     };
     
-    // Populate a slider with content
+    // Create seamless loop by duplicating content
+    const createSeamlessLoop = (images) => {
+        // Triple the array for smooth continuous loop
+        return [...images, ...images, ...images];
+    };
+    
+    // Populate a slider with content for seamless loop
     const populateSlider = (containerId, images) => {
         const container = document.getElementById(containerId);
         if (!container) {
-            console.error(`Container ${containerId} not found`);
+            console.warn(`Container ${containerId} not found`);
             return;
         }
         
         container.innerHTML = '';
         
-        images.forEach((imagePath, index) => {
+        // Create seamless loop content
+        const loopImages = createSeamlessLoop(images);
+        
+        loopImages.forEach((imagePath, index) => {
             const imageItem = createImageItem(imagePath, index);
             container.appendChild(imageItem);
         });
         
-        // Set animation direction based on slider
+        // Apply animation based on slider direction
         const isLeftSlider = container.parentElement.classList.contains('left-slider');
-        container.style.animation = isLeftSlider ? 
-            'scrollDown 45s linear infinite' :
-            'scrollUp 45s linear infinite';
+        container.style.animationName = isLeftSlider ? 'scrollDownContinuous' : 'scrollUpContinuous';
+        container.style.animationDuration = '25s';
+        container.style.animationTimingFunction = 'linear';
+        container.style.animationIterationCount = 'infinite';
+        
+        console.log(`Initialized ${containerId} with ${loopImages.length} images for seamless loop`);
     };
     
-    // Initialize sliders
+    // Initialize sliders with performance optimization
     const initSliders = () => {
         try {
-            // Create shuffled sets for each slider
+            // Create different shuffled sets for each slider
             const leftImages = shuffleArray(NAIL_ART_IMAGES);
             const rightImages = shuffleArray(NAIL_ART_IMAGES);
             
-            // Duplicate images for continuous scrolling
-            const leftImageSet = [...leftImages, ...leftImages];
-            const rightImageSet = [...rightImages, ...rightImages];
-            
-            // Populate sliders
-            populateSlider('leftSliderContainer', leftImageSet);
-            populateSlider('rightSliderContainer', rightImageSet);
-            
-            // Add hover pause effect and click to enlarge
-            document.querySelectorAll('.vertical-slider-container').forEach(container => {
-                container.addEventListener('mouseenter', () => {
-                    container.style.animationPlayState = 'paused';
-                });
+            // Use requestAnimationFrame for smooth initialization
+            requestAnimationFrame(() => {
+                populateSlider('leftSliderContainer', leftImages);
+                populateSlider('rightSliderContainer', rightImages);
                 
-                container.addEventListener('mouseleave', () => {
-                    container.style.animationPlayState = 'running';
-                });
+                // Add interaction handlers
+                addSliderInteractions();
             });
             
-            // Add click event to images for modal view
-            document.querySelectorAll('.vertical-slider-image').forEach(img => {
-                img.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showImageModal(img.src, img.alt);
-                });
-            });
-            
-            console.log('Vertical sliders initialized successfully with real images');
+            console.log('✅ Vertical sliders initialized with seamless continuous loop');
         } catch (error) {
-            console.error('Error initializing sliders:', error);
+            console.error('❌ Error initializing sliders:', error);
         }
     };
     
-    // Initialize immediately
-    initSliders();
+    // Add interaction handlers for better UX
+    const addSliderInteractions = () => {
+        document.querySelectorAll('.vertical-slider').forEach(slider => {
+            const container = slider.querySelector('.vertical-slider-container');
+            
+            // Pause animation on hover for better viewing
+            slider.addEventListener('mouseenter', () => {
+                if (container) {
+                    container.style.animationPlayState = 'paused';
+                }
+            });
+            
+            // Resume animation on mouse leave
+            slider.addEventListener('mouseleave', () => {
+                if (container) {
+                    container.style.animationPlayState = 'running';
+                }
+            });
+        });
+    };
+    
+    // Initialize immediately with error handling
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSliders);
+    } else {
+        initSliders();
+    }
 }
 
 // Image modal functionality
@@ -1005,3 +1030,88 @@ function showImageModal(imageSrc, imageAlt) {
 document.addEventListener('DOMContentLoaded', function() {
     initializeVerticalSliders();
 });
+
+// Lazy loading for vertical sliders with Intersection Observer
+function lazyLoadVerticalSliders() {
+    const sliders = document.querySelectorAll('.vertical-slider');
+    
+    if ('IntersectionObserver' in window) {
+        const sliderObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Initialize the specific slider that's coming into view
+                    const slider = entry.target;
+                    const containerId = slider.querySelector('.vertical-slider-container')?.id;
+                    
+                    if (containerId) {
+                        console.log(`🔄 Lazy loading slider: ${containerId}`);
+                        initializeSpecificSlider(containerId);
+                    }
+                    
+                    observer.unobserve(slider);
+                }
+            });
+        }, {
+            rootMargin: '200px 0px', // Start loading when slider is 200px away
+            threshold: 0.1
+        });
+
+        sliders.forEach(slider => sliderObserver.observe(slider));
+    } else {
+        // Fallback for older browsers
+        initializeVerticalSliders();
+    }
+}
+
+// Initialize a specific slider container for lazy loading
+function initializeSpecificSlider(containerId) {
+    const NAIL_ART_IMAGES = [
+        'images/IMG_9914.PNG', 'images/IMG_9917.PNG', 'images/IMG_9920.PNG', 'images/IMG_9922.PNG',
+        'images/IMG_9923.PNG', 'images/IMG_9924.PNG', 'images/IMG_9925.PNG', 'images/IMG_9927.PNG',
+        'images/IMG_9929.PNG', 'images/IMG_9932.PNG', 'images/IMG_9933.PNG', 'images/IMG_9934.PNG',
+        'images/IMG_9936.PNG', 'images/IMG_9939.PNG', 'images/IMG_9940.PNG', 'images/IMG_9941.PNG'
+    ];
+    
+    const container = document.getElementById(containerId);
+    if (!container || container.hasChildNodes()) return; // Skip if already initialized
+    
+    // Shuffle and create seamless loop
+    const shuffledImages = [...NAIL_ART_IMAGES].sort(() => Math.random() - 0.5);
+    const loopImages = [...shuffledImages, ...shuffledImages, ...shuffledImages];
+    
+    // Create items with optimized loading
+    loopImages.forEach((imagePath, index) => {
+        const item = document.createElement('div');
+        item.className = 'vertical-slider-item';
+        
+        const img = document.createElement('img');
+        img.className = 'vertical-slider-image';
+        img.src = imagePath;
+        img.alt = `Nail Art Design ${(index % NAIL_ART_IMAGES.length) + 1}`;
+        img.loading = 'lazy';
+        
+        // Error handling
+        img.onerror = function() {
+            console.warn(`Failed to load image: ${imagePath}`);
+            this.style.display = 'none';
+        };
+        
+        // Click handler for modal
+        img.addEventListener('click', (e) => {
+            e.preventDefault();
+            showImageModal(imagePath, img.alt);
+        });
+        
+        item.appendChild(img);
+        container.appendChild(item);
+    });
+    
+    // Set animation
+    const isLeftSlider = container.parentElement.classList.contains('left-slider');
+    container.style.animationName = isLeftSlider ? 'scrollDownContinuous' : 'scrollUpContinuous';
+    container.style.animationDuration = '25s';
+    container.style.animationTimingFunction = 'linear';
+    container.style.animationIterationCount = 'infinite';
+    
+    console.log(`✅ Initialized ${containerId} with ${loopImages.length} images for seamless loop`);
+}

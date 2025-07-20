@@ -88,6 +88,43 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/* Main content spacing to accommodate vertical sliders */
+.main-content {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0 180px; /* Space for sliders on both sides */
+    position: relative;
+    z-index: 1;
+}
+
+/* Container adjustments */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-md);
+    position: relative;
+    z-index: 2;
+}
+
+/* Section spacing to work harmoniously with sliders */
+section {
+    padding: var(--spacing-xl) 0;
+    position: relative;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.98);
+    margin: var(--spacing-md) 0;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(12px);
+}
+
+.hero-section {
+    background: var(--purple-gradient);
+    color: var(--text-light);
+    border-radius: 25px;
+    margin: var(--spacing-md) 0;
+}
+
 /* Improve text rendering */
 h1, h2, h3, h4, h5, h6 {
     line-height: 1.2;
@@ -1195,18 +1232,19 @@ span[aria-label="required"] {
     }
 }
 
-/* Vertical Sliding Gallery Effects */
+/* Vertical Sliding Gallery Effects - Continuous Loop */
 .vertical-slider {
     position: fixed;
     top: 0;
     bottom: 0;
     height: 100%;
-    width: 120px;
+    width: 150px;
     overflow: hidden;
     z-index: -1; /* Behind the main content */
-    background: linear-gradient(to right, rgba(255, 240, 255, 0.2), rgba(138, 43, 226, 0.05));
+    background: linear-gradient(to right, rgba(255, 240, 255, 0.15), rgba(138, 43, 226, 0.03));
     display: flex;
     flex-direction: column;
+    pointer-events: none;
 }
 
 .left-slider {
@@ -1215,37 +1253,46 @@ span[aria-label="required"] {
 
 .right-slider {
     right: 0;
-    background: linear-gradient(to left, rgba(255, 240, 255, 0.2), rgba(138, 43, 226, 0.05));
+    background: linear-gradient(to left, rgba(255, 240, 255, 0.15), rgba(138, 43, 226, 0.03));
 }
 
 .vertical-slider-container {
     display: flex;
     flex-direction: column;
-    animation-duration: 36.85s;
+    animation-duration: 25s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
     animation-delay: 0s;
-    padding: 8px 0;
-    min-height: 150%;
+    height: fit-content;
     position: relative;
     will-change: transform;
+    pointer-events: auto;
+}
+
+.left-slider .vertical-slider-container {
+    animation-name: scrollDownContinuous;
+}
+
+.right-slider .vertical-slider-container {
+    animation-name: scrollUpContinuous;
 }
 
 .vertical-slider-item {
     width: 100%;
-    height: 140px;
-    margin: 8px 0;
-    padding: 2px;
+    height: 160px;
+    margin: 6px 0;
+    padding: 3px;
     box-sizing: border-box;
     position: relative;
     z-index: 1;
+    flex-shrink: 0;
 }
 
 .vertical-slider-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: var(--shadow-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 2px solid rgba(138, 43, 226, 0.2);
@@ -1258,38 +1305,44 @@ span[aria-label="required"] {
 }
 
 .vertical-slider-image:hover {
-    transform: scale(1.03);
+    transform: scale(1.08);
     box-shadow: var(--shadow-heavy);
     border-color: var(--primary-color);
     position: relative;
-    z-index: 5;
+    z-index: 15;
 }
 
 .vertical-slider-placeholder {
     width: 100%;
     height: 100%;
     background: var(--purple-gradient);
-    border-radius: 8px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: var(--text-dark);
-    font-size: 2rem;
+    font-size: 1.5rem;
     border: 2px solid rgba(138, 43, 226, 0.2);
 }
 
-@keyframes scrollDown {
+/* Pause on hover for better UX */
+.vertical-slider:hover .vertical-slider-container {
+    animation-play-state: paused;
+}
+
+/* Continuous seamless loop animations */
+@keyframes scrollDownContinuous {
     0% {
         transform: translateY(0);
     }
     100% {
-        transform: translateY(-50%);
+        transform: translateY(-100%);
     }
 }
 
-@keyframes scrollUp {
+@keyframes scrollUpContinuous {
     0% {
-        transform: translateY(-50%);
+        transform: translateY(-100%);
     }
     100% {
         transform: translateY(0);
@@ -1316,24 +1369,48 @@ span[aria-label="required"] {
     100% { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
-/* Responsive adjustments for sliders */
-@media (max-width: 768px) {
-    body {
-        padding: 0 100px;
+/* Responsive adjustments for sliders and content spacing */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 0 160px;
     }
     
     .vertical-slider {
-        width: 80px;
+        width: 120px;
     }
     
     .vertical-slider-item {
-        height: 100px;
-        margin: 6px 0;
+        height: 140px;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0 var(--spacing-md);
+    }
+    
+    .main-content {
+        padding: 0 140px;
+    }
+    
+    .vertical-slider {
+        width: 100px;
+    }
+    
+    .vertical-slider-item {
+        height: 120px;
+        margin: 4px 0;
+    }
+    
+    section {
+        padding: var(--spacing-lg) 0;
+        margin: var(--spacing-sm) 0;
+        border-radius: 15px;
     }
     
     .gallery-grid {
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 20px;
+        gap: var(--spacing-md);
     }
     
     .image-modal-content {
@@ -1354,17 +1431,40 @@ span[aria-label="required"] {
 
 @media (max-width: 480px) {
     body {
-        padding: 0 60px;
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .main-content {
+        padding: 0 120px;
     }
     
     .vertical-slider {
-        width: 50px;
+        width: 80px;
     }
     
     .vertical-slider-item {
-        height: 80px;
-        margin: 4px 0;
+        height: 100px;
+        margin: 3px 0;
     }
+    
+    section {
+        padding: var(--spacing-md) 0;
+        margin: var(--spacing-xs) 0;
+        border-radius: 12px;
+    }
+    
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .vertical-slider-image {
+        border-radius: 6px;
+    }
+    
+    .vertical-slider-image:hover {
+        transform: scale(1.05);
+    }
+}
     
     .vertical-slider-placeholder {
         font-size: 1.5rem;
@@ -1388,4 +1488,3 @@ span[aria-label="required"] {
         font-size: 1rem;
         padding: 10px;
     }
-}
