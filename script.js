@@ -1,8 +1,5 @@
-// Kirra's Nail Studio - Optimized Website JavaScript
-// Performance optimizations and mobile-first approach
-
-// Performance optimization: Use requestAnimationFrame for smooth animations
-let animationFrame;
+// Kirra's Nail Studio - Simplified Website JavaScript
+// Appointment scheduling and interactive features
 
 // Service data with pricing and duration (from original API)
 const services = {
@@ -28,69 +25,15 @@ const workingHours = {
 // Lunch break
 const LUNCH_BREAK = { start: '12:30', end: '13:30' };
 
-// SMS Gateway configuration (owner's phone number and carrier)
-const SMS_CONFIG = {
-    // Replace with owner's actual phone number (10 digits, no formatting)
-    phoneNumber: '4632457230', // Kirra's actual phone number
-    
-    // Replace with owner's carrier gateway
-    // AT&T: txt.att.net, Verizon: vtext.com, T-Mobile: tmomail.net, Sprint: messaging.sprintpcs.com
-    carrier: 'txt.att.net', // CHANGE THIS TO YOUR CARRIER
-
-    // Get SMS email address
-    getSMSEmail: function() {
-        return `${this.phoneNumber}@${this.carrier}`;
-    }
-};
-
-// Performance optimization: Debounce function for scroll events
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Performance optimization: Throttle function for resize events
-function throttle(func, limit) {
-    let inThrottle;
-    return function() {
-        const args = arguments;
-        const context = this;
-        if (!inThrottle) {
-            func.apply(context, args);
-            inThrottle = true;
-            setTimeout(() => inThrottle = false, limit);
-        }
-    }
-}
-
-// Initialize the website with performance optimizations
+// Initialize the website
 document.addEventListener('DOMContentLoaded', function() {
-    // Use requestAnimationFrame for smooth initialization
-    requestAnimationFrame(() => {
-        initializeNavigation();
-        initializeAppointmentForm();
-        setMinDate();
-        
-        // Lazy load gallery and sliders to improve initial page load
-        if ('IntersectionObserver' in window) {
-            lazyLoadGallery();
-            lazyLoadVerticalSliders();
-        } else {
-            // Fallback for older browsers
-            initializeGallery();
-            initializeVerticalSliders();
-        }
-    });
+    initializeNavigation();
+    initializeAppointmentForm();
+    initializeGallery();
+    setMinDate();
 });
 
-// Optimized navigation functionality with passive event listeners
+// Navigation functionality
 function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link');
     
@@ -98,16 +41,13 @@ function initializeNavigation() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             
-            // Performance: Use DocumentFragment to batch DOM updates
-            const fragment = document.createDocumentFragment();
-            
             // Remove active class from all links
             navLinks.forEach(l => l.classList.remove('active'));
             
             // Add active class to clicked link
             this.classList.add('active');
             
-            // Smooth scroll to section with optimized scrolling
+            // Smooth scroll to section
             const targetId = this.getAttribute('href');
             const targetSection = document.querySelector(targetId);
             
@@ -115,48 +55,18 @@ function initializeNavigation() {
                 const headerHeight = document.querySelector('.main-header').offsetHeight;
                 const targetPosition = targetSection.offsetTop - headerHeight - 20;
                 
-                // Use smooth scrolling with requestAnimationFrame for better performance
-                smoothScrollTo(targetPosition);
+                window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                });
             }
         });
     });
     
-    // Debounced scroll event for performance
-    const debouncedScrollHandler = debounce(updateActiveNavLink, 10);
-    window.addEventListener('scroll', debouncedScrollHandler, { passive: true });
+    // Update active nav link on scroll
+    window.addEventListener('scroll', updateActiveNavLink);
 }
 
-// Optimized smooth scrolling
-function smoothScrollTo(targetPosition) {
-    const startPosition = window.pageYOffset;
-    const distance = targetPosition - startPosition;
-    const duration = 800;
-    let start = null;
-    
-    function step(timestamp) {
-        if (!start) start = timestamp;
-        const progress = timestamp - start;
-        const percentage = Math.min(progress / duration, 1);
-        
-        // Easing function for smooth animation
-        const ease = easeInOutCubic(percentage);
-        
-        window.scrollTo(0, startPosition + distance * ease);
-        
-        if (progress < duration) {
-            requestAnimationFrame(step);
-        }
-    }
-    
-    requestAnimationFrame(step);
-}
-
-// Easing function for smooth animations
-function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
-}
-
-// Optimized active nav link updating
 function updateActiveNavLink() {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
@@ -173,142 +83,35 @@ function updateActiveNavLink() {
         }
     });
     
-    // Batch DOM updates for performance
-    requestAnimationFrame(() => {
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
-            }
-        });
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+            link.classList.add('active');
+        }
     });
 }
 
-// Optimized appointment form initialization
+// Appointment form functionality
 function initializeAppointmentForm() {
-    const form = document.getElementById('appointment-form') || document.getElementById('appointmentForm');
-    const dateInput = document.getElementById('date') || document.getElementById('requestDate');
-    const timeSelect = document.getElementById('time') || document.getElementById('requestTime');
-    const serviceSelect = document.getElementById('service') || document.getElementById('serviceType');
-    const serviceInfo = document.getElementById('service-info');
+    const form = document.getElementById('appointmentForm');
+    const dateInput = document.getElementById('requestDate');
+    const timeSelect = document.getElementById('requestTime');
+    const serviceSelect = document.getElementById('serviceType');
     
-    if (!form) return;
-    
-    // Service selection handler with debouncing
-    const debouncedServiceChange = debounce(() => {
-        if (serviceInfo) updateServiceInfo();
+    // Handle date change to update available times
+    dateInput.addEventListener('change', function() {
         updateAvailableTimes();
-    }, 300);
+    });
     
-    if (serviceSelect) serviceSelect.addEventListener('change', debouncedServiceChange);
-    if (dateInput) dateInput.addEventListener('change', updateAvailableTimes);
+    // Handle service selection
+    serviceSelect.addEventListener('change', function() {
+        updateAvailableTimes();
+    });
     
-    // Form submission with SMS notification
-    form.addEventListener('submit', handleFormSubmission);
-    
-    // Initialize service info
-    if (serviceInfo) updateServiceInfo();
-}
-
-function updateServiceInfo() {
-    const serviceSelect = document.getElementById('service') || document.getElementById('serviceType');
-    const serviceInfo = document.getElementById('service-info');
-    const selectedService = services[serviceSelect.value];
-    
-    if (selectedService && serviceInfo) {
-        requestAnimationFrame(() => {
-            serviceInfo.innerHTML = `
-                <div class="service-details">
-                    <h4>${selectedService.name}</h4>
-                    <p class="service-description">${selectedService.description}</p>
-                    <div class="service-meta">
-                        <span class="duration">⏱️ ${selectedService.duration} minutes</span>
-                        <span class="price">💰 $${selectedService.price}</span>
-                    </div>
-                </div>
-            `;
-            serviceInfo.style.display = 'block';
-        });
-    } else if (serviceInfo) {
-        serviceInfo.style.display = 'none';
-    }
-}
-
-// Optimized form submission handler
-function handleFormSubmission(e) {
-    e.preventDefault();
-    
-    // Use either form ID that exists
-    const form = document.getElementById('appointment-form') || document.getElementById('appointmentForm');
-    const formData = new FormData(form);
-    
-    // Extract form data with fallback field names
-    const appointmentData = {
-        id: generateId(),
-        clientName: formData.get('name') || formData.get('clientName'),
-        phoneNumber: formData.get('phone') || formData.get('phoneNumber'),
-        email: formData.get('email'),
-        serviceType: formData.get('service') || formData.get('serviceType'),
-        appointmentDate: formData.get('date') || formData.get('requestDate'),
-        appointmentTime: formData.get('time') || formData.get('requestTime'),
-        specialRequests: formData.get('message') || formData.get('specialRequests') || '',
-        status: 'pending',
-        createdAt: new Date().toISOString()
-    };
-    
-    // Validate required fields
-    if (!appointmentData.clientName || !appointmentData.phoneNumber || !appointmentData.serviceType || 
-        !appointmentData.appointmentDate || !appointmentData.appointmentTime) {
-        showNotification('Please fill in all required fields.', 'error');
-        return;
-    }
-    
-    // Save appointment request
-    saveAppointmentRequest(appointmentData);
-    
-    // Send notifications
-    sendAppointmentNotifications(appointmentData);
-    
-    // Show success message
-    const serviceName = services[appointmentData.serviceType].name;
-    const formattedDate = new Date(appointmentData.appointmentDate).toLocaleDateString();
-    const formattedTime = formatTime(appointmentData.appointmentTime);
-    
-    showNotification(
-        `Thank you ${appointmentData.clientName}! Your appointment request for ${serviceName} on ${formattedDate} at ${formattedTime} has been submitted. We'll confirm within 24 hours!`, 
-        'success'
-    );
-    
-    // Reset form
-    form.reset();
-    updateAvailableTimes();
-}
-
-// Performance optimized notification system
-function showNotification(message, type = 'success') {
-    let notification = document.getElementById('notification');
-    
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = 'notification';
-        document.body.appendChild(notification);
-    }
-    
-    // Use requestAnimationFrame for smooth animations
-    requestAnimationFrame(() => {
-        notification.textContent = message;
-        notification.className = `notification ${type}`;
-        
-        // Show notification
-        requestAnimationFrame(() => {
-            notification.classList.add('show');
-        });
-        
-        // Hide notification after 5 seconds
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 5000);
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        handleAppointmentRequest(e);
     });
 }
 
@@ -432,9 +235,6 @@ function handleAppointmentRequest(e) {
     // Save appointment request
     saveAppointmentRequest(formData);
     
-    // Send email and SMS notifications
-    sendAppointmentNotifications(formData);
-    
     // Show success message
     const serviceName = services[formData.serviceType].name;
     const formattedDate = new Date(formData.appointmentDate).toLocaleDateString();
@@ -450,109 +250,6 @@ function handleAppointmentRequest(e) {
     updateAvailableTimes();
 }
 
-// Send appointment notifications via email and SMS
-function sendAppointmentNotifications(formData) {
-    const serviceName = services[formData.serviceType].name;
-    const servicePrice = services[formData.serviceType].price;
-    const formattedDate = new Date(formData.appointmentDate).toLocaleDateString();
-    const formattedTime = formatTime(formData.appointmentTime);
-    
-    // Create message content
-    const message = `NEW APPOINTMENT REQUEST
-    
-Client: ${formData.clientName}
-Phone: ${formData.phoneNumber}
-Email: ${formData.email || 'Not provided'}
-Service: ${serviceName} ($${servicePrice})
-Date: ${formattedDate}
-Time: ${formattedTime}
-Special Requests: ${formData.specialRequests || 'None'}
-
-Please confirm within 24 hours.`;
-
-    // Send email notification to owner
-    sendEmailNotification(formData, message);
-    
-    // Send SMS notification to owner
-    sendSMSNotification(formData, message);
-}
-
-// Send email notification using FormSubmit
-function sendEmailNotification(formData, message) {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://formsubmit.co/hello@kirrasnailstudio.com'; // Replace with your email
-    form.style.display = 'none';
-    
-    // Add form fields
-    const fields = {
-        '_subject': 'New Appointment Request - Kirra\'s Nail Studio',
-        '_captcha': 'false',
-        '_template': 'table',
-        '_next': window.location.href, // Redirect back to the same page
-        'message': message,
-        'client_name': formData.clientName,
-        'client_phone': formData.phoneNumber,
-        'client_email': formData.email,
-        'service': services[formData.serviceType].name,
-        'appointment_date': formData.appointmentDate,
-        'appointment_time': formData.appointmentTime,
-        'studio_phone': '(463) 245-7230'
-    };
-    
-    Object.keys(fields).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = fields[key];
-        form.appendChild(input);
-    });
-    
-    document.body.appendChild(form);
-    form.submit(); // Actually submit the email form
-    document.body.removeChild(form);
-}
-
-// Send SMS notification using email-to-SMS gateway
-function sendSMSNotification(formData, message) {
-    // Create a shorter message for SMS (160 character limit)
-    const smsMessage = `NEW BOOKING: ${formData.clientName}, ${formData.phoneNumber}, ${services[formData.serviceType].name}, ${new Date(formData.appointmentDate).toLocaleDateString()}, ${formatTime(formData.appointmentTime)}`;
-    
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = 'https://formsubmit.co/' + SMS_CONFIG.getSMSEmail();
-    form.style.display = 'none';
-    form.target = '_blank'; // Open in new tab to avoid redirect
-    
-    // Add form fields for SMS
-    const smsFields = {
-        '_subject': 'Kirra\'s Nail Studio', // Short subject for SMS
-        '_captcha': 'false',
-        '_template': 'box', // Minimal template
-        '_next': 'https://kirrasnailstudio.com', // Redirect URL
-        'message': smsMessage
-    };
-    
-    Object.keys(smsFields).forEach(key => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = smsFields[key];
-        form.appendChild(input);
-    });
-    
-    document.body.appendChild(form);
-    
-    // Submit the SMS form with a slight delay to avoid conflicts
-    setTimeout(() => {
-        form.submit();
-        document.body.removeChild(form);
-    }, 1000);
-    
-    console.log('SMS sent to:', SMS_CONFIG.getSMSEmail());
-    console.log('SMS message:', smsMessage);
-}
-
 // Save appointment request to localStorage
 function saveAppointmentRequest(request) {
     let requests = JSON.parse(localStorage.getItem('appointmentRequests') || '[]');
@@ -565,175 +262,45 @@ function generateId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
 }
 
-// Lazy loading for gallery images with Intersection Observer
-function lazyLoadGallery() {
-    const galleryImages = document.querySelectorAll('.gallery-image, .vertical-slider-image');
-    
-    if ('IntersectionObserver' in window) {
-        const imageObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    const src = img.dataset.src || img.src;
-                    
-                    if (img.dataset.src) {
-                        img.src = src;
-                        img.removeAttribute('data-src');
-                    }
-                    
-                    img.classList.add('loaded');
-                    observer.unobserve(img);
-                }
-            });
-        }, {
-            rootMargin: '50px 0px',
-            threshold: 0.1
-        });
-
-        galleryImages.forEach(img => {
-            if (img.dataset.src) {
-                imageObserver.observe(img);
-            }
-        });
-    }
-}
-
-// Optimized image modal functionality with better performance
-function showImageModal(imageSrc, imageAlt) {
-    let modal = document.getElementById('imageModal');
-    
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'imageModal';
-        modal.className = 'image-modal';
-        modal.setAttribute('role', 'dialog');
-        modal.setAttribute('aria-labelledby', 'modalCaption');
-        modal.innerHTML = `
-            <div class="image-modal-content">
-                <button class="image-modal-close" aria-label="Close image modal">&times;</button>
-                <img class="image-modal-img" id="modalImage" alt="">
-                <div class="image-modal-caption" id="modalCaption"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        // Optimized event listeners
-        const closeBtn = modal.querySelector('.image-modal-close');
-        const closeModal = () => {
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-            }, 300);
-        };
-        
-        closeBtn.addEventListener('click', closeModal);
-        
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
-        
-        // Keyboard navigation
-        document.addEventListener('keydown', function escHandler(e) {
-            if (e.key === 'Escape' && modal.style.display === 'block') {
-                closeModal();
-                document.removeEventListener('keydown', escHandler);
-            }
-        });
-    }
-    
-    // Show the modal with smooth animation
-    const modalImg = modal.querySelector('#modalImage');
-    const modalCaption = modal.querySelector('#modalCaption');
-    
-    modalImg.src = imageSrc;
-    modalImg.alt = imageAlt;
-    modalCaption.textContent = imageAlt;
-    
-    modal.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-    
-    requestAnimationFrame(() => {
-        modal.style.opacity = '1';
-    });
-}
-
-// Optimized gallery initialization with real images
+// Initialize gallery with service-related content
 function initializeGallery() {
     const galleryGrid = document.getElementById('galleryGrid');
-    if (!galleryGrid) return;
     
-    // Real nail art images with service associations
-    const galleryImages = [
-        { src: 'images/IMG_9914.PNG', alt: 'Classic Manicure Design', service: 'manicure' },
-        { src: 'images/IMG_9917.PNG', alt: 'Gel Polish Perfection', service: 'gel' },
-        { src: 'images/IMG_9920.PNG', alt: 'Custom Nail Art', service: 'nail-art' },
-        { src: 'images/IMG_9922.PNG', alt: 'Acrylic Extensions', service: 'acrylic' },
-        { src: 'images/IMG_9923.PNG', alt: 'Signature Mushroom Design', service: 'mushroom-design' },
-        { src: 'images/IMG_9924.PNG', alt: 'Crystal & Gems', service: 'nail-art' },
-        { src: 'images/IMG_9925.PNG', alt: 'Floral Designs', service: 'nail-art' },
-        { src: 'images/IMG_9927.PNG', alt: 'Night Sky Theme', service: 'nail-art' },
-        { src: 'images/IMG_9929.PNG', alt: 'Butterfly Patterns', service: 'nail-art' },
-        { src: 'images/IMG_9932.PNG', alt: 'Rainbow Effects', service: 'gel' },
-        { src: 'images/IMG_9933.PNG', alt: 'Music-Inspired Art', service: 'nail-art' },
-        { src: 'images/IMG_9934.PNG', alt: 'Professional Pedicure', service: 'pedicure' },
-        { src: 'images/IMG_9936.PNG', alt: 'Artistic Expression', service: 'nail-art' },
-        { src: 'images/IMG_9939.PNG', alt: 'Elegant Manicure', service: 'manicure' },
-        { src: 'images/IMG_9940.PNG', alt: 'Custom Design', service: 'nail-art' },
-        { src: 'images/IMG_9941.PNG', alt: 'Signature Style', service: 'nail-art' }
+    // Gallery items that reflect the actual services offered
+    const galleryItems = [
+        { emoji: '💅', text: 'Classic Manicures', service: 'manicure' },
+        { emoji: '🦶', text: 'Pedicures & Foot Care', service: 'pedicure' },
+        { emoji: '✨', text: 'Gel Polish Perfection', service: 'gel' },
+        { emoji: '🌸', text: 'Acrylic Extensions', service: 'acrylic' },
+        { emoji: '�', text: 'Custom Nail Art', service: 'nail-art' },
+        { emoji: '🍄', text: 'Signature Mushroom Designs', service: 'mushroom-design' },
+        { emoji: '🌙', text: 'Night Sky Themes', service: 'nail-art' },
+        { emoji: '🦋', text: 'Butterfly Patterns', service: 'nail-art' },
+        { emoji: '🌺', text: 'Floral Designs', service: 'nail-art' },
+        { emoji: '💎', text: 'Crystal & Gems', service: 'nail-art' },
+        { emoji: '🌈', text: 'Rainbow Effects', service: 'gel' },
+        { emoji: '🎵', text: 'Music-Inspired Art', service: 'nail-art' }
     ];
     
-    // Use DocumentFragment for better performance
-    const fragment = document.createDocumentFragment();
-    
-    galleryImages.forEach((imageData, index) => {
+    galleryItems.forEach(item => {
         const galleryItem = document.createElement('div');
         galleryItem.className = 'gallery-item';
-        
-        const img = document.createElement('img');
-        img.className = 'gallery-image';
-        img.setAttribute('data-src', imageData.src); // For lazy loading
-        img.alt = imageData.alt;
-        img.loading = 'lazy';
-        
-        // Placeholder for lazy loading
-        img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300"%3E%3Crect width="100%25" height="100%25" fill="%23f0f0f0"/%3E%3C/svg%3E';
-        
-        // Add error handling
-        img.onerror = function() {
-            console.warn(`Failed to load gallery image: ${imageData.src}`);
-            this.style.display = 'none';
-        };
-        
-        const overlay = document.createElement('div');
-        overlay.className = 'gallery-overlay';
-        overlay.innerHTML = `
+        galleryItem.innerHTML = `
             <div class="gallery-content">
-                <span class="gallery-text">${imageData.alt}</span>
-                <i class="fas fa-search-plus gallery-icon"></i>
+                <span class="gallery-emoji">${item.emoji}</span>
+                <span class="gallery-text">${item.text}</span>
             </div>
         `;
+        galleryItem.dataset.service = item.service;
         
-        galleryItem.appendChild(img);
-        galleryItem.appendChild(overlay);
-        galleryItem.dataset.service = imageData.service;
-        
-        // Optimized event handlers
-        galleryItem.addEventListener('click', () => {
-            showImageModal(imageData.src, imageData.alt);
+        // Add click functionality to scroll to booking with pre-selected service
+        galleryItem.addEventListener('click', function() {
+            const serviceType = this.dataset.service;
+            scrollToBooking(serviceType);
         });
         
-        galleryItem.addEventListener('dblclick', () => {
-            scrollToBooking(imageData.service);
-        });
-        
-        fragment.appendChild(galleryItem);
+        galleryGrid.appendChild(galleryItem);
     });
-    
-    galleryGrid.appendChild(fragment);
-    
-    // Initialize lazy loading
-    lazyLoadGallery();
 }
 
 // Service card interactions
@@ -834,57 +401,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Vertical Sliding Gallery Implementation - Continuous Seamless Loop
+// Vertical Sliding Gallery Implementation
 function initializeVerticalSliders() {
-    // Real nail art images from the images folder
-    const NAIL_ART_IMAGES = [
-        'images/IMG_9914.PNG',
-        'images/IMG_9917.PNG',
-        'images/IMG_9920.PNG',
-        'images/IMG_9922.PNG',
-        'images/IMG_9923.PNG',
-        'images/IMG_9924.PNG',
-        'images/IMG_9925.PNG',
-        'images/IMG_9927.PNG',
-        'images/IMG_9929.PNG',
-        'images/IMG_9932.PNG',
-        'images/IMG_9933.PNG',
-        'images/IMG_9934.PNG',
-        'images/IMG_9936.PNG',
-        'images/IMG_9939.PNG',
-        'images/IMG_9940.PNG',
-        'images/IMG_9941.PNG'
+    // Use gallery images for vertical sliders
+    const IMAGE_FILENAMES = [
+        'IMG_9914.PNG', 'IMG_9917.PNG', 'IMG_9920.PNG', 'IMG_9922.PNG', 'IMG_9923.PNG',
+        'IMG_9924.PNG', 'IMG_9925.PNG', 'IMG_9927.PNG', 'IMG_9929.PNG', 'IMG_9932.PNG',
+        'IMG_9933.PNG', 'IMG_9934.PNG', 'IMG_9936.PNG', 'IMG_9939.PNG', 'IMG_9940.PNG', 'IMG_9941.PNG'
     ];
-    
-    // Create nail art image items with proper structure for seamless loop
-    const createImageItem = (imagePath, index) => {
-        const item = document.createElement('div');
-        item.className = 'vertical-slider-item';
-        
-        const img = document.createElement('img');
-        img.className = 'vertical-slider-image';
-        img.src = imagePath;
-        img.alt = `Nail Art Design ${index + 1}`;
-        img.title = `Click to view ${img.alt}`;
-        img.loading = 'lazy';
-        
-        // Add error handling for images
-        img.onerror = function() {
-            console.warn(`Failed to load image: ${imagePath}`);
-            this.style.display = 'none';
-        };
-        
-        // Add click handler for modal
-        img.addEventListener('click', (e) => {
-            e.preventDefault();
-            showImageModal(imagePath, img.alt);
-        });
-        
-        item.appendChild(img);
-        return item;
-    };
-    
-    // Shuffle an array for variety
+
+    // Shuffle an array
     const shuffleArray = (array) => {
         const newArray = [...array];
         for (let i = newArray.length - 1; i > 0; i--) {
@@ -893,225 +419,70 @@ function initializeVerticalSliders() {
         }
         return newArray;
     };
-    
-    // Create seamless loop by duplicating content
-    const createSeamlessLoop = (images) => {
-        // Triple the array for smooth continuous loop
-        return [...images, ...images, ...images];
+
+    // Create image slider item
+    const createImageItem = (filename, index) => {
+        const item = document.createElement('div');
+        item.className = 'vertical-slider-item';
+        const img = document.createElement('img');
+        img.className = 'vertical-slider-image';
+        img.src = `images/${filename}`;
+        img.alt = `Nail Art ${index + 1}`;
+        img.title = `Nail Art ${index + 1}`;
+        item.appendChild(img);
+        return item;
     };
-    
-    // Populate a slider with content for seamless loop
-    const populateSlider = (containerId, images) => {
+
+    // Populate a slider with images
+    const populateSlider = (containerId, items) => {
         const container = document.getElementById(containerId);
         if (!container) {
-            console.warn(`Container ${containerId} not found`);
+            console.error(`Container ${containerId} not found`);
             return;
         }
-        
         container.innerHTML = '';
-        
-        // Create seamless loop content
-        const loopImages = createSeamlessLoop(images);
-        
-        loopImages.forEach((imagePath, index) => {
-            const imageItem = createImageItem(imagePath, index);
+        items.forEach((filename, index) => {
+            const imageItem = createImageItem(filename, index);
             container.appendChild(imageItem);
         });
-        
-        // Apply animation based on slider direction
+        // Set animation direction based on slider (use correct keyframes)
         const isLeftSlider = container.parentElement.classList.contains('left-slider');
-        container.style.animationName = isLeftSlider ? 'scrollDownContinuous' : 'scrollUpContinuous';
-        container.style.animationDuration = '25s';
-        container.style.animationTimingFunction = 'linear';
-        container.style.animationIterationCount = 'infinite';
-        
-        console.log(`Initialized ${containerId} with ${loopImages.length} images for seamless loop`);
+        container.style.animation = isLeftSlider ? 
+            'scrollDownContinuous 36.85s linear infinite' :
+            'scrollUpContinuous 36.85s linear infinite';
     };
-    
-    // Initialize sliders with performance optimization
+
+    // Initialize sliders
     const initSliders = () => {
         try {
-            // Create different shuffled sets for each slider
-            const leftImages = shuffleArray(NAIL_ART_IMAGES);
-            const rightImages = shuffleArray(NAIL_ART_IMAGES);
-            
-            // Use requestAnimationFrame for smooth initialization
-            requestAnimationFrame(() => {
-                populateSlider('leftSliderContainer', leftImages);
-                populateSlider('rightSliderContainer', rightImages);
-                
-                // Add interaction handlers
-                addSliderInteractions();
+            // Shuffle and duplicate images for continuous scrolling
+            const leftImages = shuffleArray(IMAGE_FILENAMES);
+            const rightImages = shuffleArray(IMAGE_FILENAMES);
+            const leftImageSet = [...leftImages, ...leftImages, ...leftImages.slice(0, 6)];
+            const rightImageSet = [...rightImages, ...rightImages, ...rightImages.slice(0, 6)];
+            // Populate sliders
+            populateSlider('leftSliderContainer', leftImageSet);
+            populateSlider('rightSliderContainer', rightImageSet);
+            // Add hover pause effect
+            document.querySelectorAll('.vertical-slider-container').forEach(container => {
+                container.addEventListener('mouseenter', () => {
+                    container.style.animationPlayState = 'paused';
+                });
+                container.addEventListener('mouseleave', () => {
+                    container.style.animationPlayState = 'running';
+                });
             });
-            
-            console.log('✅ Vertical sliders initialized with seamless continuous loop');
+            console.log('Vertical sliders initialized with gallery images');
         } catch (error) {
-            console.error('❌ Error initializing sliders:', error);
+            console.error('Error initializing sliders:', error);
         }
     };
-    
-    // Add interaction handlers for better UX
-    const addSliderInteractions = () => {
-        document.querySelectorAll('.vertical-slider').forEach(slider => {
-            const container = slider.querySelector('.vertical-slider-container');
-            
-            // Pause animation on hover for better viewing
-            slider.addEventListener('mouseenter', () => {
-                if (container) {
-                    container.style.animationPlayState = 'paused';
-                }
-            });
-            
-            // Resume animation on mouse leave
-            slider.addEventListener('mouseleave', () => {
-                if (container) {
-                    container.style.animationPlayState = 'running';
-                }
-            });
-        });
-    };
-    
-    // Initialize immediately with error handling
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initSliders);
-    } else {
-        initSliders();
-    }
-}
 
-// Image modal functionality
-function showImageModal(imageSrc, imageAlt) {
-    // Create modal if it doesn't exist
-    let modal = document.getElementById('imageModal');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'imageModal';
-        modal.className = 'image-modal';
-        modal.innerHTML = `
-            <div class="image-modal-content">
-                <span class="image-modal-close">&times;</span>
-                <img class="image-modal-img" id="modalImage">
-                <div class="image-modal-caption" id="modalCaption"></div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        
-        // Add close functionality
-        const closeBtn = modal.querySelector('.image-modal-close');
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
-        });
-        
-        // Close on background click
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
-        });
-        
-        // Close on ESC key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.style.display === 'block') {
-                modal.style.display = 'none';
-            }
-        });
-    }
-    
-    // Show the modal with the image
-    const modalImg = modal.querySelector('#modalImage');
-    const modalCaption = modal.querySelector('#modalCaption');
-    
-    modalImg.src = imageSrc;
-    modalCaption.textContent = imageAlt;
-    modal.style.display = 'block';
+    // Initialize immediately
+    initSliders();
 }
 
 // Initialize vertical sliders when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     initializeVerticalSliders();
 });
-
-// Lazy loading for vertical sliders with Intersection Observer
-function lazyLoadVerticalSliders() {
-    const sliders = document.querySelectorAll('.vertical-slider');
-    
-    if ('IntersectionObserver' in window) {
-        const sliderObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    // Initialize the specific slider that's coming into view
-                    const slider = entry.target;
-                    const containerId = slider.querySelector('.vertical-slider-container')?.id;
-                    
-                    if (containerId) {
-                        console.log(`🔄 Lazy loading slider: ${containerId}`);
-                        initializeSpecificSlider(containerId);
-                    }
-                    
-                    observer.unobserve(slider);
-                }
-            });
-        }, {
-            rootMargin: '200px 0px', // Start loading when slider is 200px away
-            threshold: 0.1
-        });
-
-        sliders.forEach(slider => sliderObserver.observe(slider));
-    } else {
-        // Fallback for older browsers
-        initializeVerticalSliders();
-    }
-}
-
-// Initialize a specific slider container for lazy loading
-function initializeSpecificSlider(containerId) {
-    const NAIL_ART_IMAGES = [
-        'images/IMG_9914.PNG', 'images/IMG_9917.PNG', 'images/IMG_9920.PNG', 'images/IMG_9922.PNG',
-        'images/IMG_9923.PNG', 'images/IMG_9924.PNG', 'images/IMG_9925.PNG', 'images/IMG_9927.PNG',
-        'images/IMG_9929.PNG', 'images/IMG_9932.PNG', 'images/IMG_9933.PNG', 'images/IMG_9934.PNG',
-        'images/IMG_9936.PNG', 'images/IMG_9939.PNG', 'images/IMG_9940.PNG', 'images/IMG_9941.PNG'
-    ];
-    
-    const container = document.getElementById(containerId);
-    if (!container || container.hasChildNodes()) return; // Skip if already initialized
-    
-    // Shuffle and create seamless loop
-    const shuffledImages = [...NAIL_ART_IMAGES].sort(() => Math.random() - 0.5);
-    const loopImages = [...shuffledImages, ...shuffledImages, ...shuffledImages];
-    
-    // Create items with optimized loading
-    loopImages.forEach((imagePath, index) => {
-        const item = document.createElement('div');
-        item.className = 'vertical-slider-item';
-        
-        const img = document.createElement('img');
-        img.className = 'vertical-slider-image';
-        img.src = imagePath;
-        img.alt = `Nail Art Design ${(index % NAIL_ART_IMAGES.length) + 1}`;
-        img.loading = 'lazy';
-        
-        // Error handling
-        img.onerror = function() {
-            console.warn(`Failed to load image: ${imagePath}`);
-            this.style.display = 'none';
-        };
-        
-        // Click handler for modal
-        img.addEventListener('click', (e) => {
-            e.preventDefault();
-            showImageModal(imagePath, img.alt);
-        });
-        
-        item.appendChild(img);
-        container.appendChild(item);
-    });
-    
-    // Set animation
-    const isLeftSlider = container.parentElement.classList.contains('left-slider');
-    container.style.animationName = isLeftSlider ? 'scrollDownContinuous' : 'scrollUpContinuous';
-    container.style.animationDuration = '25s';
-    container.style.animationTimingFunction = 'linear';
-    container.style.animationIterationCount = 'infinite';
-    
-    console.log(`✅ Initialized ${containerId} with ${loopImages.length} images for seamless loop`);
-}
