@@ -3,9 +3,9 @@
 
 :root {
     /* Purple Palette */
-    --primary-color: #8A2BE2; /* Blue Violet - Primary actions */
+    --primary-color: linear-gradient(135deg, #000000, #FF1493); /* Blue Violet - Primary actions */
     --secondary-color: #C8A2C8; /* Lilac - Secondary elements */
-    --accent-color: #DA70D6; /* Orchid - Accent highlights */
+    --accent-color: linear-gradient(135deg, #000000, #FF1493); /* Orchid - Accent highlights */
     
     /* Pink Palette */
     --pink-primary: #FF1493; /* Deep Pink - Important elements */
@@ -24,7 +24,7 @@
     
     /* Gradients */
     --background: linear-gradient(135deg, #F8F0FF, #E6E6FA, #DDA0DD);
-    --purple-gradient: linear-gradient(135deg, #FF1493, #000000);
+    --purple-gradient: linear-gradient(135deg, #000000, #FF1493); /* Overwrite previous value */
     --pink-gradient: linear-gradient(135deg, #FF1493, #FF69B4);
     --dark-gradient: linear-gradient(135deg, #2F2F3E, #3E3E4E);
     
@@ -32,14 +32,14 @@
     --card-bg: rgba(248, 240, 255, 0.95);
     --text-light: #2F2F3E;
     --text-dark: #F8F0FF;
-    --success: #8A2BE2;
+    --success: linear-gradient(135deg, #000000, #FF1493);
     --warning: #FF69B4;
     --danger: #FF1493;
     
     /* Shadows - Optimized for performance */
-    --shadow-light: 0 2px 8px rgba(138, 43, 226, 0.1);
-    --shadow-medium: 0 4px 16px rgba(138, 43, 226, 0.15);
-    --shadow-heavy: 0 8px 24px rgba(138, 43, 226, 0.2);
+    --shadow-light: 0 2px 8px #000000;
+    --shadow-medium: 0 4px 16px #000000;
+    --shadow-heavy: 0 8px 24px #000000;
     
     /* Typography */
     --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
@@ -119,15 +119,15 @@ body {
 
 /* Section spacing to work harmoniously with sliders */
 section {
-    padding: var(--spacing-xl) 0;
+    padding: 2rem 0;
+    margin: 1rem 0;
     position: relative;
     z-index: 2;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    margin: var(--spacing-md) 0;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px #00000022;
     width: 100%; /* Ensure full width within container */
     box-sizing: border-box;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -152,16 +152,18 @@ h1, h2, h3, h4, h5, h6 {
     text-rendering: optimizeLegibility;
 }
 
-/* Responsive images */
-img {
+/* Optimize images for speed and SEO */
+img, .gallery-image {
     max-width: 100%;
     height: auto;
     display: block;
+    border: 0;
+    vertical-align: middle;
 }
 
 /* Focus management for accessibility */
 :focus {
-    outline: 2px solid var(--primary-color);
+    outline: 2px solid #FF1493;
     outline-offset: 2px;
 }
 
@@ -174,7 +176,7 @@ img {
     position: absolute;
     top: -100px;
     left: var(--spacing-md);
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-sm);
@@ -316,25 +318,18 @@ span[aria-label="required"] {
 }
 
 .nav-link {
-    background: linear-gradient(135deg, #2F2F3E, #FF69B4);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    background: none;
+    color: #FF1493;
     text-decoration: none;
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--radius-sm);
-    transition: all 0.3s ease;
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-align: center;
+    transition: background 0.2s, color 0.2s;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    background: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+.nav-link.active, .nav-link:hover {
+    background: #FF149322;
+    color: #000;
 }
 
 /* Tablet and up */
@@ -536,38 +531,24 @@ span[aria-label="required"] {
 }
 
 .btn-primary {
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
     box-shadow: var(--shadow-light);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
     box-shadow: var(--shadow-medium);
 }
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    border: 2px solid linear-gradient(135deg, #000000, #FF1493);
+    color: linear-gradient(135deg, #000000, #FF1493);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
-    transform: translateY(-2px);
-}
-
-.btn:focus {
-    outline: 2px solid var(--accent-color);
-    outline-offset: 2px;
-}
-
-@media (min-width: 768px) {
-    .btn {
-        min-width: 180px;
-        padding: var(--spacing-md) var(--spacing-xl);
-    }
 }
 
 /* Section Titles */
@@ -575,7 +556,7 @@ span[aria-label="required"] {
     font-size: var(--font-size-xl);
     text-align: center;
     margin-bottom: var(--spacing-xl);
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -609,7 +590,7 @@ span[aria-label="required"] {
 .service-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-heavy);
-    border-color: var(--primary-color);
+    border-color: linear-gradient(135deg, #000000, #FF1493);
 }
 
 .service-icon {
@@ -623,7 +604,7 @@ span[aria-label="required"] {
     gap: var(--spacing-sm);
     position: relative;
     z-index: 1001; /* Above sliders */
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     box-shadow: var(--shadow-medium);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -661,7 +642,7 @@ span[aria-label="required"] {
 }
 
 .price {
-    color: var(--primary-color);
+    color: linear-gradient(135deg, #000000, #FF1493);
     font-size: var(--font-size-base);
 }
 
@@ -741,7 +722,7 @@ span[aria-label="required"] {
 }
 
 .btn-primary {
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
     box-shadow: var(--shadow-light);
 }
@@ -753,12 +734,12 @@ span[aria-label="required"] {
 
 .btn-secondary {
     background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
+    color: linear-gradient(135deg, #000000, #FF1493);
+    border: 2px solid linear-gradient(135deg, #000000, #FF1493);
 }
 
 .btn-secondary:hover {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
     transform: translateY(-3px);
 }
@@ -776,7 +757,7 @@ span[aria-label="required"] {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 60px;
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -808,13 +789,13 @@ span[aria-label="required"] {
 .service-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-heavy);
-    border-color: var(--accent-color);
+    border-color: linear-gradient(135deg, #000000, #FF1493);
 }
 
 .service-icon {
     width: 80px;
     height: 80px;
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -856,9 +837,9 @@ span[aria-label="required"] {
 }
 
 .price {
+    color: linear-gradient(135deg, #000000, #FF1493);
     font-size: 1.3rem;
     font-weight: 700;
-    color: var(--pink-primary);
 }
 
 /* Gallery Section */
@@ -887,7 +868,7 @@ span[aria-label="required"] {
 .gallery-item:hover {
     transform: scale(1.05);
     box-shadow: var(--shadow-heavy);
-    border-color: var(--primary-color);
+    border-color: linear-gradient(135deg, #000000, #FF1493);
 }
 
 .gallery-item:hover .gallery-overlay {
@@ -911,7 +892,7 @@ span[aria-label="required"] {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(138, 43, 226, 0.9);
+    background: linear-gradient(135deg, #000000, #FF1493);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -978,7 +959,7 @@ span[aria-label="required"] {
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
-    background: var(--primary-color);
+    background: linear-gradient(135deg, #000000, #FF1493);
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -989,8 +970,7 @@ span[aria-label="required"] {
 }
 
 .image-modal-close:hover {
-    background: var(--accent-color);
-    transform: scale(1.1);
+    background: linear-gradient(135deg, #000000, #FF1493);
 }
 
 .image-modal-caption {
@@ -999,7 +979,7 @@ span[aria-label="required"] {
     font-weight: 600;
     margin-top: 15px;
     padding: 15px;
-    background: rgba(138, 43, 226, 0.8);
+    background: linear-gradient(135deg, #000000, #FF1493);
     border-radius: 10px;
     backdrop-filter: blur(10px);
 }
@@ -1074,13 +1054,11 @@ span[aria-label="required"] {
 /* Booking Notes Section */
 .booking-notes {
     text-align: center;
-    margin-top: 40px;
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: #fff2fa;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #00000011;
 }
 
 .booking-notes h4 {
@@ -1091,27 +1069,24 @@ span[aria-label="required"] {
 }
 
 .booking-notes ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
     display: inline-block;
     text-align: left;
-    max-width: 500px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
 }
 
 .booking-notes ul li {
-    margin-bottom: 12px;
-    color: var(--dark-secondary);
+    margin-bottom: 0.75em;
+    padding-left: 1.5em;
     position: relative;
-    padding-left: 25px;
-    line-height: 1.5;
 }
 
 .booking-notes ul li:before {
     content: "✨";
     position: absolute;
     left: 0;
-    color: var(--primary-color);
+    color: #FF1493;
 }
 
 /* Contact Section */
@@ -1140,32 +1115,37 @@ span[aria-label="required"] {
 
 .contact-item i {
     font-size: 1.5rem;
-    color: var(--primary-color);
+    /* Use gradient for phone and envelope icons */
+    background: linear-gradient(135deg, #000000, #FF1493);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
     margin-top: 5px;
     width: 30px;
 }
 
 .contact-item h4 {
     margin-bottom: 5px;
-    color: var(--dark-primary);
+    color: #fff;
 }
 
 .contact-item p {
-    color: var(--dark-secondary);
+    color: #fff;
     line-height: 1.6;
 }
 
 /* Phone link styling */
 .contact-item a[href^="tel"] {
-    color: var(--primary-color);
+    color: linear-gradient(135deg, #000000, #FF1493);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .contact-item a[href^="tel"]:hover {
-    color: var(--accent-color);
-    text-shadow: 0 0 8px rgba(138, 43, 226, 0.3);
+    color: linear-gradient(135deg, #000000, #FF1493);
+    text-shadow: 0 0 8px linear-gradient(135deg, #000000, #FF1493);
 }
 
 .social-links {
@@ -1186,7 +1166,7 @@ span[aria-label="required"] {
 .social-link {
     width: 50px;
     height: 50px;
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1228,12 +1208,12 @@ span[aria-label="required"] {
 }
 
 .notification.success {
-    background: var(--success);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
 }
 
 .notification.error {
-    background: var(--danger);
+    background: linear-gradient(135deg, #000000, #FF1493);
     color: var(--text-dark);
 }
 
@@ -1275,7 +1255,7 @@ span[aria-label="required"] {
     width: 150px;
     overflow: hidden;
     z-index: 1002; /* In front of main content */
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     box-shadow: var(--shadow-medium);
     border-radius: 0 20px 20px 0;
     display: flex;
@@ -1289,7 +1269,7 @@ span[aria-label="required"] {
 
 .right-slider {
     right: 0;
-    background: var(--purple-gradient);
+    background: linear-gradient(135deg, #000000, #FF1493);
     box-shadow: var(--shadow-medium);
     border-radius: 20px 0 0 20px;
 }
@@ -1336,7 +1316,7 @@ span[aria-label="required"] {
     border-radius: 10px;
     box-shadow: var(--shadow-light);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 2px solid rgba(138, 43, 226, 0.2);
+    border: 2px solid linear-gradient(135deg, #000000, #FF1493);
     display: block;
     will-change: transform;
     backface-visibility: hidden;
@@ -1346,24 +1326,8 @@ span[aria-label="required"] {
 }
 
 .vertical-slider-image:hover {
-    transform: scale(1.08);
     box-shadow: var(--shadow-heavy);
-    border-color: var(--primary-color);
-    position: relative;
-    z-index: 15;
-}
-
-.vertical-slider-placeholder {
-    width: 100%;
-    height: 100%;
-    background: var(--purple-gradient);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-dark);
-    font-size: 1.5rem;
-    border: 2px solid rgba(138, 43, 226, 0.2);
+    border-color: linear-gradient(135deg, #000000, #FF1493);
 }
 
 /* Pause on hover for better UX */
@@ -1399,7 +1363,7 @@ span[aria-label="required"] {
     width: 60px;
     height: 60px;
     border: 6px solid rgba(138, 43, 226, 0.1);
-    border-top: 6px solid var(--primary-color);
+    border-top: 6px solid linear-gradient(135deg, #000000, #FF1493);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     z-index: 9999;
@@ -1711,8 +1675,7 @@ span[aria-label="required"] {
     }
     
     .main-nav {
-        gap: 4px;
-        padding: 0;
+        gap: 0.5em;
     }
     
     .nav-link {

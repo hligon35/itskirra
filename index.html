@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="description" content="Kirra's Nail Studio - Boutique nail art and music experience in a relaxing studio. Book manicures, pedicures, gel, acrylic, and custom nail art.">
+    <meta name="keywords" content="nail studio, nail art, manicure, pedicure, gel nails, acrylic nails, custom nail art, mushroom nails, Kirra, music, boutique, booking">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="https://kirrasnailstudio.com/">
+    <meta property="og:title" content="Kirra's Nail Studio - Where Nails Meet Art & Music">
+    <meta property="og:description" content="Boutique nail art and music experience. Book your appointment for unique nails and relaxation.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kirrasnailstudio.com/">
+    <meta property="og:image" content="images/nail-art-1.jpg">
     <title>Kirra's Nail Studio - Where Nails Meet Art & Music</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -26,10 +34,10 @@
     <header class="main-header">
         <div class="header-container">
             <div class="logo-section">
-                <h1><i class="fas fa-paint-brush"></i> Kirra's Nail Studio</h1>
+                <h1><i class="fas fa-paint-brush" aria-hidden="true"></i> Kirra's Nail Studio</h1>
                 <p class="tagline">Where Nails Meet Art & Music</p>
             </div>
-            <nav class="main-nav">
+            <nav class="main-nav" aria-label="Main Navigation">
                 <a href="#home" class="nav-link active">Home</a>
                 <a href="#services" class="nav-link">Services</a>
                 <a href="#gallery" class="nav-link">Gallery</a>
@@ -48,7 +56,7 @@
                 <a href="#booking" class="btn btn-primary">
                     <i class="fas fa-calendar-alt"></i> Book Appointment
                 </a>
-                <a href="#services" class="btn btn-secondary">
+                <a href="#services" class="btn btn-primary">
                     <i class="fas fa-list"></i> View Services
                 </a>
             </div>
@@ -143,14 +151,44 @@
     </section>
 
     <!-- Gallery Section -->
-    <section id="gallery" class="gallery-section">
+    <!-- <section id="gallery" class="gallery-section">
         <div class="container">
             <h2 class="section-title">My Work</h2>
             <div class="gallery-grid" id="galleryGrid">
-                <!-- Gallery images will be loaded here -->
+                <!-- Images from images folder, lazy loading for speed -->
+                <!-- <div class="gallery-item">
+                    <img src="images/nail-art-1.jpg" alt="Pink floral nail art" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-2.jpg" alt="Geometric gel nails" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-3.jpg" alt="Mushroom themed nail art" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-4.jpg" alt="Classic manicure" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-5.jpg" alt="Acrylic set with glitter" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-6.jpg" alt="Custom nail art design" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-7.jpg" alt="Pedicure spa nails" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-8.jpg" alt="Gel nails with art" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-9.jpg" alt="Unique nail art" class="gallery-image" loading="lazy">
+                </div>
+                <div class="gallery-item">
+                    <img src="images/nail-art-10.jpg" alt="Professional nail products" class="gallery-image" loading="lazy">
+                </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- Booking Section -->
     <section id="booking" class="booking-section">
@@ -226,17 +264,20 @@
                     </form>
                 </div>
 
-                <div class="booking-info">
-                    <div class="booking-notes">
+                <div class="booking-info" style="display: flex; justify-content: center;">
+                    <div class="booking-notes" style="margin-left: auto; margin-right: auto; text-align: center;">
                         <h4>Please Note:</h4>
-                        <ul>
-                            <li>Appointments are confirmed within 24 hours</li>
-                            <li>48-hour cancellation policy</li>
-                            <li>Bring your own music playlist or enjoy ours!</li>
-                            <li>Group bookings available for special occasions</li>
-                            <li>All tools are sterilized between clients</li>
-                            <li>We use high-quality, professional nail products</li>
-                        </ul>
+                        <div style="display: flex; justify-content: center;">
+                            <ul style="display: inline-block; text-align: left;">
+                                <li>Appointments are confirmed within 24 hours</li>
+                                <li>1-hour cancellation policy</li>
+                                <li>Bring your own music playlist or enjoy mine!</li>
+                                <li>Group bookings available for special occasions</li>
+                                <li>All tools are sterilized between clients</li>
+                                <li>I use high-quality, professional nail products</li>
+                                <li>Parking Limited</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -246,7 +287,7 @@
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
         <div class="container">
-            <h2 class="section-title">Visit Our Studio</h2>
+            <h2 class="section-title">Visit My Studio</h2>
             <div class="contact-grid">
                 <div class="contact-info">
                     <div class="contact-item">
@@ -267,7 +308,7 @@
                 </div>
 
                 <div class="social-links">
-                    <h4>Follow Our Art</h4>
+                    <h4 style="color: #fff;">Follow My Art</h4>
                     <div class="social-icons">
                         <a href="#" class="social-link">
                             <i class="fab fa-instagram"></i>
@@ -297,7 +338,7 @@
     <!-- Notification -->
     <div id="notification" class="notification"></div>
 
-    <!-- Scripts -->
-    <script src="script.js"></script>
+    <!-- Scripts at end for speed -->
+    <script src="script.js" defer></script>
 </body>
 </html>
