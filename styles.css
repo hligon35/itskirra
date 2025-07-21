@@ -91,22 +91,25 @@ body {
 /* Main content wrapper to contain everything between sliders */
 .main-content {
     margin: 0 auto;
-    max-width: calc(100vw - 300px); /* Account for both sliders */
-    margin-left: 150px; /* Space for left slider */
-    margin-right: 150px; /* Space for right slider */
+    max-width: calc(100vw - 300px); /* Fit between two 150px sliders */
+    margin-left: 150px; /* Position after left slider */
+    margin-right: 150px; /* Position before right slider */
     width: calc(100vw - 300px);
     position: relative;
     z-index: 1;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 /* Container adjustments */
 .container {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 0 var(--spacing-md);
     position: relative;
     z-index: 2;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Section spacing to work harmoniously with sliders */
@@ -128,7 +131,7 @@ section {
     color: var(--text-light);
     border-radius: 0;
     margin: 0;
-    width: 100vw;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -172,12 +175,6 @@ img {
 
 .skip-link:focus {
     top: var(--spacing-md);
-}
-
-.container {
-    max-width: min(1200px, 100% - 2rem);
-    margin: 0 auto;
-    padding: 0 var(--spacing-md);
 }
 
 /* Performance optimization: reduce paint/layout thrashing */
@@ -245,7 +242,7 @@ span[aria-label="required"] {
     position: fixed;
     top: 0;
     left: 150px; /* Start after left slider */
-    right: 150px; /* End before right slider */
+    width: calc(100vw - 300px); /* Span between sliders */
     z-index: 1000;
     box-shadow: none;
     backdrop-filter: none;
@@ -254,7 +251,7 @@ span[aria-label="required"] {
 
 .header-container {
     width: 100%;
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 0 var(--spacing-sm);
     display: flex;
@@ -263,6 +260,7 @@ span[aria-label="required"] {
     gap: var(--spacing-sm);
     position: relative;
     z-index: 1001; /* Above sliders */
+    box-sizing: border-box;
 }
 
 .logo-section h1 {
@@ -350,7 +348,7 @@ span[aria-label="required"] {
     
     .main-header {
         left: 100px;
-        right: 100px;
+        width: calc(100vw - 200px);
     }
     
     .header-container {
@@ -361,7 +359,7 @@ span[aria-label="required"] {
 @media (max-width: 1024px) {
     .main-header {
         left: 120px;
-        right: 120px;
+        width: calc(100vw - 240px);
     }
     
     .header-container {
@@ -372,7 +370,7 @@ span[aria-label="required"] {
 @media (max-width: 480px) {
     .main-header {
         left: 80px;
-        right: 80px;
+        width: calc(100vw - 160px);
         padding: var(--spacing-xs) 0;
     }
     
@@ -1423,10 +1421,10 @@ span[aria-label="required"] {
 /* Responsive adjustments for sliders and content spacing */
 @media (max-width: 1024px) {
     .main-content {
-        max-width: calc(100vw - 240px); /* Account for smaller sliders */
-        margin-left: 120px;
-        margin-right: 120px;
-        width: calc(100vw - 240px);
+        max-width: calc(100vw - 240px); /* Fit between two 120px sliders */
+        padding-left: 120px;
+        padding-right: 120px;
+        width: 100%;
     }
     
     .vertical-slider {
@@ -1440,10 +1438,10 @@ span[aria-label="required"] {
 
 @media (max-width: 768px) {
     .main-content {
-        max-width: calc(100vw - 200px); /* Account for smaller sliders */
-        margin-left: 100px;
-        margin-right: 100px;
-        width: calc(100vw - 200px);
+        max-width: calc(100vw - 200px); /* Fit between two 100px sliders */
+        padding-left: 100px;
+        padding-right: 100px;
+        width: 100%;
     }
     
     .vertical-slider {
@@ -1484,10 +1482,10 @@ span[aria-label="required"] {
 
 @media (max-width: 480px) {
     .main-content {
-        max-width: calc(100vw - 160px); /* Account for smaller sliders */
-        margin-left: 80px;
-        margin-right: 80px;
-        width: calc(100vw - 160px);
+        max-width: calc(100vw - 160px); /* Fit between two 80px sliders */
+        padding-left: 80px;
+        padding-right: 80px;
+        width: 100%;
     }
     
     .vertical-slider {
